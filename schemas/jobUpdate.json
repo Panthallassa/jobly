@@ -1,0 +1,12 @@
+{
+	"type": "object",
+	"properties": {
+		"title": { "type": "string" },
+		"salary": { "type": "number", "minimum": 0 },
+		"equity": {
+			"type": "string",
+			"pattern": "^[0-1](\\.\\d{1,2})?$"
+		}
+	},
+	"additionalProperties": false
+}
