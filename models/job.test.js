@@ -2,6 +2,7 @@
 
 const db = require("../db");
 const Job = require("./job");
+const { NotFoundError } = require("../expressError");
 const {
 	commonBeforeAll,
 	commonBeforeEach,
@@ -24,6 +25,10 @@ describe("create", function () {
 			equity: "0.05",
 			companyHandle: "c1",
 		});
+
+		// Log the job ID after creation
+		console.log("Created Job:", job);
+
 		expect(job).toEqual({
 			id: expect.any(Number),
 			title: "New Job",

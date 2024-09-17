@@ -303,3 +303,38 @@ describe("PATCH /users/:username", () => {
 			});
 	});
 });
+
+/************************************** POST /users/:username/jobs/:id */
+describe("POST /users/:username/jobs/:id", function () {
+	let testUser;
+	let testJobId;
+
+	beforeEach(async function () {
+		// Retrieve the test user and job
+		const resultUser = await db.query(
+			`SELECT username FROM users WHERE username = 'u1'`
+		);
+		testUser = resultUser.rows[0];
+
+		const resultJob = await db.query(
+			`SELECT id FROM jobs WHERE title = 'Job1'`
+		);
+		testJobId = resultJob.rows[0].id;
+	});
+
+	test("apply for a job", async function () {
+		const resp = await request(app)
+			.post(`/users/${testUser.username}/jobs/${testJobId}`)
+			.set("authorization", `Bearer ${u1Token}`);
+
+		expect(resp.body).toEqual({ applied: testJobId });
+
+		// Check the database to ensure the application was inserted
+		const result = await db.query(
+			`SELECT * FROM applications WHERE username = $1 AND job_id = $2`,
+			[testUser.username, testJobId]
+		);
+
+		expect(result.rows.length).toEqual(1);
+	});
+});

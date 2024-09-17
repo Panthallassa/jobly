@@ -170,6 +170,46 @@ router.patch(
 	}
 );
 
+/** POST /users/:username/jobs/:id => { applied: jobId }
+ *
+ * Allows a user to apply for a job (or an admin to do so for them).
+ *
+ * Authorization required: login (either the user themselves or an admin).
+ */
+
+router.post(
+	"/:username/jobs/:id",
+	authenticateJWT,
+	ensureLoggedIn,
+	async function (req, res, next) {
+		try {
+			const { username, id: jobIdParam } = req.params;
+			const currentUser = res.locals.user;
+
+			// Convert jobIdParam into a number
+			const jobId = parseInt(jobIdParam, 10);
+
+			// Check is the user is the owner or admin
+			if (
+				currentUser.username !== username &&
+				!currentUser.isAdmin
+			) {
+				throw new UnauthorizedError(
+					"You do not have permission to apply for jobs for this user."
+				);
+			}
+
+			const application = await User.applyForJob(
+				username,
+				jobId
+			);
+			return res.json({ applied: jobId });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+
 /** DELETE /[username]  =>  { deleted: username }
  *
  * Authorization required: login

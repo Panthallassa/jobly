@@ -54,9 +54,6 @@ async function commonBeforeAll() {
 		companyHandle: "c2",
 	});
 
-	// Log the job data
-	console.log("Inserted Jobs:", job1, job2);
-
 	await User.register({
 		username: "u1",
 		firstName: "U1F",

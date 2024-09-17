@@ -1,10 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const {
-	BadRequestError,
-	NotFoundError,
-} = require("../expressError");
+const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Job {
@@ -35,7 +32,11 @@ class Job {
 	 *
 	 * Returns [{ id, title, salary, equity, companyHandle }, ...]
 	 */
-	static async findAll({ title, minSalary, equityFilter }) {
+	static async findAll({
+		title,
+		minSalary,
+		equityFilter,
+	} = {}) {
 		let query = `SELECT id, title, salary, equity, company_handle AS "companyHandle"
             FROM jobs`;
 		let queryConditions = [];
@@ -71,6 +72,7 @@ class Job {
 		const jobsRes = await db.query(query, queryParams);
 		return jobsRes.rows;
 	}
+
 	/** Given a job id, return data about the job.
 	 *
 	 * Returns { id, title, salary, equity, companyHandle }
